@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  email          String   @unique
+  password       String
+  role           Role     @default(USER)
+  firstName      String
+  lastName       String
+  username       String   @unique
+  profilePicture String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  posts           Post[]
+  upvotes         Upvote[]
+  downvotes       Downvote[]
+  comments        Comment[]
+  CommentUpvote   CommentUpvote[]
+  CommentDownvote CommentDownvote[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  content   String
+  category  String
+  pictures  String
+  readingTime Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  upvotes   Upvote[]
+  downvotes Downvote[]
+  comments  Comment[]
+}
+
+model Upvote {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  postId Int
+  post   Post @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+}
+
+model Downvote {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  postId Int
+  post   Post @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+}
+
+model CommentUpvote {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  commentId Int
+  comment   Comment  @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, commentId])
+}
+
+model CommentDownvote {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  commentId Int
+  comment   Comment  @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, commentId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    Int
+  user      User              @relation(fields: [userId], references: [id])
+  postId    Int
+  post      Post              @relation(fields: [postId], references: [id])
+  parentId  Int?
+  parent    Comment?          @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[]         @relation("CommentReplies")
+  upvotes   CommentUpvote[]
+  downvotes CommentDownvote[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
