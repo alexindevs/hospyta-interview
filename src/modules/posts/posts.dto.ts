@@ -40,6 +40,11 @@ export class UpdatePostDto {
   @IsOptional()
   category?: string;
 
+  @ApiProperty({ description: 'The updated title of the post' })
+  @IsString()
+  @IsOptional()
+  title?: string;
+
   @ApiProperty({ description: 'The updated pictures associated with the post' })
   @IsString()
   @IsOptional()
