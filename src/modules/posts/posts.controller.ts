@@ -135,12 +135,12 @@ export class PostsController {
   })
   async getPostLikes(
     @Param('id') id: string,
-    @Query('userId') userId?: string,
+    @Req() req: RequestWithUser,
   ) {
-    return this.postsService.getPostLikes(
-      Number(id),
-      userId ? Number(userId) : undefined,
-    );
+    console.log(req.user);
+    const userIdToUse = req.user?.id ? Number(req.user.id) : undefined;
+    console.log(userIdToUse);
+    return this.postsService.getPostLikes(Number(id), userIdToUse);
   }
 
   @Post(':id/comments')

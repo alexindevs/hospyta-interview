@@ -11,13 +11,50 @@ export class PostsService {
     return { code, message, data };
   }
 
-  async post(postWhereUniqueInput: Prisma.PostWhereUniqueInput) {
+  async post(postWhereUniqueInput: Prisma.PostWhereUniqueInput, userId?: number) {
     const post = await this.prisma.post.findUnique({
       where: postWhereUniqueInput,
+      include: {
+        user: true, // Include the user who wrote the post
+        comments: {
+          include: {
+            user: true, // Include the user associated with each comment
+          },
+        },
+        _count: {
+          select: {
+            upvotes: true, // Count the number of upvotes
+            downvotes: true, // Count the number of downvotes
+          },
+        },
+        upvotes: {
+          where: {
+            userId,
+          },
+          select: {
+            userId: true, // Only include the userId if the user has upvoted
+          },
+        },
+        downvotes: {
+          where: {
+            userId,
+          },
+          select: {
+            userId: true, // Only include the userId if the user has downvoted
+          },
+        },
+      },
     });
-    return this.standardResponse(200, 'Post retrieved successfully', post);
+  
+    const response = {
+      ...post,
+      upvotesCount: post?._count?.upvotes || 0,
+      downvotesCount: post?._count?.downvotes || 0,
+    };
+  
+    return this.standardResponse(200, 'Post retrieved successfully', response);
   }
-
+  
   async getPostsByCategory(category: string) {
     const posts = await this.prisma.post.findMany({
       where: { category },

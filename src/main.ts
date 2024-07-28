@@ -4,7 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 // import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
-import { ResponseInterceptor } from './shared/interceptors/response.interceptor';
+// import { ResponseInterceptor } from './shared/interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -19,7 +19,6 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1', {
     exclude: ['/', 'health', 'api', 'api/v1', 'api/docs'],
   });
-  app.useGlobalInterceptors(new ResponseInterceptor());
 
   const options = new DocumentBuilder()
     .setTitle('Hospyta Backend API')
