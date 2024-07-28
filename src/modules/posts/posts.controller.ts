@@ -6,7 +6,6 @@ import {
   Delete,
   Body,
   Param,
-  Query,
   UseGuards,
   Req,
 } from '@nestjs/common';
@@ -133,10 +132,7 @@ export class PostsController {
     status: 200,
     description: 'Return likes information for a post.',
   })
-  async getPostLikes(
-    @Param('id') id: string,
-    @Req() req: RequestWithUser,
-  ) {
+  async getPostLikes(@Param('id') id: string, @Req() req: RequestWithUser) {
     console.log(req.user);
     const userIdToUse = req.user?.id ? Number(req.user.id) : undefined;
     console.log(userIdToUse);

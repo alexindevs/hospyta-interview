@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { Prisma } from '@prisma/client';
-import { CreatePostDto } from './posts.dto';
 
 @Injectable()
 export class PostsService {
@@ -11,7 +10,10 @@ export class PostsService {
     return { code, message, data };
   }
 
-  async post(postWhereUniqueInput: Prisma.PostWhereUniqueInput, userId?: number) {
+  async post(
+    postWhereUniqueInput: Prisma.PostWhereUniqueInput,
+    userId?: number,
+  ) {
     const post = await this.prisma.post.findUnique({
       where: postWhereUniqueInput,
       include: {
@@ -45,16 +47,16 @@ export class PostsService {
         },
       },
     });
-  
+
     const response = {
       ...post,
       upvotesCount: post?._count?.upvotes || 0,
       downvotesCount: post?._count?.downvotes || 0,
     };
-  
+
     return this.standardResponse(200, 'Post retrieved successfully', response);
   }
-  
+
   async getPostsByCategory(category: string) {
     const posts = await this.prisma.post.findMany({
       where: { category },
