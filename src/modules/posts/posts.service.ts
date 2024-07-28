@@ -33,7 +33,7 @@ export class PostsService {
     return this.standardResponse(200, 'Posts retrieved successfully', posts);
   }
 
-  async createPost(data: CreatePostDto): Promise<any> {
+  async createPost(data: any): Promise<any> {
     const readingTime = this.calculateReadingTime(data.content);
     const post = await this.prisma.post.create({
       data: {
@@ -41,6 +41,7 @@ export class PostsService {
         category: data.category,
         pictures: data.pictures,
         readingTime,
+        title: data.title,
         user: { connect: { id: data.userId } },
       },
     });

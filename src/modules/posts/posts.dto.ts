@@ -13,10 +13,10 @@ export class CreatePostDto {
   @IsNotEmpty()
   content: string;
 
-  @ApiProperty({ description: 'The ID of the user who created the post' })
-  @IsNumber()
-  @IsPositive()
-  userId: number;
+  @ApiProperty({ description: 'The title of the post' })
+  @IsString()
+  @IsNotEmpty()
+  title: string;
 
   @ApiProperty({ description: 'The category of the post' })
   @IsString()

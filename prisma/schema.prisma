@@ -34,6 +34,7 @@ model Post {
   id        Int      @id @default(autoincrement())
   content   String
   category  String
+  title     String
   pictures  String
   readingTime Int
   createdAt DateTime @default(now())
